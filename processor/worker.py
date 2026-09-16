@@ -30,24 +30,24 @@ WORKER_API_URL = os.getenv("WORKER_API_URL", "https://your-worker-url.workers.de
 PROCESSOR_SECRET = os.getenv("PROCESSOR_SECRET_TOKEN", "default_secret")
 NODE_ID = os.getenv("NODE_ID", "oracle-ampere-01")
 
-R2_ENDPOINT = os.getenv("R2_ENDPOINT_URL") # e.g. https://<accountid>.r2.cloudflarestorage.com
-R2_ACCESS_KEY = os.getenv("R2_ACCESS_KEY_ID")
-R2_SECRET_KEY = os.getenv("R2_SECRET_ACCESS_KEY")
-R2_BUCKET_NAME = os.getenv("R2_BUCKET_NAME", "personal-music-library")
+S3_ENDPOINT = os.getenv("S3_ENDPOINT_URL") or os.getenv("R2_ENDPOINT_URL", "https://gateway.storjshare.io")
+S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY_ID") or os.getenv("R2_ACCESS_KEY_ID")
+S3_SECRET_KEY = os.getenv("S3_SECRET_ACCESS_KEY") or os.getenv("R2_SECRET_ACCESS_KEY")
+S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME") or os.getenv("R2_BUCKET_NAME", "gai")
 
 POLL_INTERVAL_SECONDS = 5
 HEARTBEAT_INTERVAL_SECONDS = 25
 PROCESS_ONCE = os.getenv("PROCESS_ONCE", "false").lower() in ("true", "1", "yes")
 
 def get_s3_client():
-    if not R2_ENDPOINT or not R2_ACCESS_KEY or not R2_SECRET_KEY:
-        print("[WARN] R2 credentials not fully configured. Using mock storage mode.")
+    if not S3_ENDPOINT or not S3_ACCESS_KEY or not S3_SECRET_KEY:
+        print("[WARN] S3/Storj credentials not fully configured. Using mock storage mode.")
         return None
     return boto3.client(
         "s3",
-        endpoint_url=R2_ENDPOINT,
-        aws_access_key_id=R2_ACCESS_KEY,
-        aws_secret_access_key=R2_SECRET_KEY,
+        endpoint_url=S3_ENDPOINT,
+        aws_access_key_id=S3_ACCESS_KEY,
+        aws_secret_access_key=S3_SECRET_KEY,
         config=Config(signature_version="s3v4")
     )
 
