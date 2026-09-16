@@ -1,0 +1,51 @@
+name: Process Music Acquisition Job
+
+on:
+  repository_dispatch:
+    types: [process_music_job]
+  workflow_dispatch:
+    inputs:
+      job_id:
+        description: 'Specific Job ID to process (optional, leave empty to claim next queued job)'
+        required: false
+        default: ''
+
+jobs:
+  process-job:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: 'processor/requirements.txt'
+
+      - name: Install System Dependencies (ffmpeg)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Install Python Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r processor/requirements.txt
+
+      - name: Run Audio Processor
+        env:
+          WORKER_API_URL: ${{ secrets.WORKER_API_URL }}
+          PROCESSOR_SECRET_TOKEN: ${{ secrets.PROCESSOR_SECRET_TOKEN }}
+          NODE_ID: 'github-actions-runner'
+          R2_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT_URL }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME || 'personal-music-library' }}
+          TARGET_JOB_ID: ${{ github.event.client_payload.job_id || inputs.job_id }}
+          PROCESS_ONCE: 'true'
+        run: |
+          python processor/worker.py

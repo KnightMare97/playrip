@@ -1,0 +1,6 @@
+{
+  "name": "Personal Music Library",
+  "description": "Personal web-based music library and media management system with Telegram integration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

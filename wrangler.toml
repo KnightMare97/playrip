@@ -1,0 +1,25 @@
+name = "personal-music-library"
+main = "src/server.ts"
+compatibility_date = "2024-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Static Assets (React Front-end)
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+
+# Cloudflare D1 Database Binding
+[[d1_databases]]
+binding = "DB"
+database_name = "music-library-db"
+database_id = "YOUR_D1_DATABASE_ID_HERE"
+
+# Cloudflare R2 Storage Bucket Binding
+[[r2_buckets]]
+binding = "MUSIC_BUCKET"
+bucket_name = "personal-music-library"
+
+# Environment Variables & Secrets (Set sensitive values via `wrangler secret put <KEY>`)
+[vars]
+ENVIRONMENT = "production"
+R2_BUCKET_NAME = "personal-music-library"

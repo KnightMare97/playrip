@@ -1,0 +1,18 @@
+[Unit]
+Description=Personal Music Library - Pull Processor Daemon
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/music-processor
+EnvironmentFile=/home/ubuntu/music-processor/.env
+ExecStart=/usr/bin/python3 /home/ubuntu/music-processor/worker.py
+Restart=always
+RestartSec=5s
+
+# Resource limits & safety
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
