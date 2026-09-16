@@ -9,7 +9,7 @@ import { useMusic } from '../context/MusicContext';
 import { Bookmark as BookmarkType } from '../types';
 
 export const BookmarksView: React.FC = () => {
-  const { bookmarks, toggleBookmark, setInspectAlbum, setInspectArtist } = useMusic();
+  const { bookmarks, toggleBookmark, setActiveTab } = useMusic();
   const [filter, setFilter] = useState<'all' | 'artist' | 'album' | 'track'>('all');
 
   const filteredBookmarks = bookmarks.filter(b => 
@@ -17,15 +17,15 @@ export const BookmarksView: React.FC = () => {
   );
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-200">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-200">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2 border-b border-zinc-900">
         <div>
-          <h1 className="text-xl font-bold text-zinc-100 flex items-center gap-2">
-            <Bookmark className="w-5 h-5 text-amber-400" />
+          <h1 className="text-2xl sm:text-3xl font-bold text-zinc-100 flex items-center gap-2.5 tracking-tight">
+            <Bookmark className="w-6 h-6 text-amber-400" />
             <span>Bookmarks</span>
           </h1>
-          <p className="text-xs text-zinc-400">
-            Quickly access your favorite artists, albums, and tracks for future acquisition.
+          <p className="text-sm text-zinc-400 mt-0.5 font-medium">
+            Saved albums, artists, and tracks (persists across sessions and updates).
           </p>
         </div>
 
@@ -35,7 +35,7 @@ export const BookmarksView: React.FC = () => {
             <button
               key={tab}
               onClick={() => setFilter(tab)}
-              className={`px-3 py-1 rounded-lg capitalize font-medium transition-colors ${
+              className={`px-3 py-1.5 rounded-lg capitalize font-medium transition-colors ${
                 filter === tab
                   ? 'bg-zinc-800 text-zinc-100'
                   : 'text-zinc-400 hover:text-zinc-200'
@@ -48,12 +48,18 @@ export const BookmarksView: React.FC = () => {
       </div>
 
       {filteredBookmarks.length === 0 ? (
-        <div className="p-16 border border-dashed border-zinc-800 rounded-2xl text-center space-y-2">
-          <Bookmark className="w-8 h-8 text-zinc-600 mx-auto" />
-          <div className="text-sm font-medium text-zinc-400">No bookmarks yet</div>
-          <p className="text-xs text-zinc-500">
-            Click the bookmark icon on any artist, album, or track in Search to pin it here.
+        <div className="p-16 border border-dashed border-zinc-800 rounded-3xl text-center space-y-3">
+          <Bookmark className="w-10 h-10 text-zinc-600 mx-auto" />
+          <h3 className="text-base font-semibold text-zinc-300">No bookmarks yet</h3>
+          <p className="text-xs text-zinc-500 max-w-sm mx-auto">
+            Click the bookmark icon on any artist or album in Search to pin it here. Your bookmarks are permanently saved!
           </p>
+          <button
+            onClick={() => setActiveTab('search')}
+            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl inline-flex items-center gap-2 transition-all mt-2"
+          >
+            Find Albums to Bookmark
+          </button>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -76,7 +82,7 @@ export const BookmarksView: React.FC = () => {
                 </div>
 
                 <div className="min-w-0">
-                  <div className="text-xs font-semibold text-emerald-400 uppercase tracking-wider mb-0.5">
+                  <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-0.5">
                     {bm.entityType}
                   </div>
                   <div className="text-sm font-bold text-zinc-100 truncate">
@@ -109,3 +115,4 @@ export const BookmarksView: React.FC = () => {
     </div>
   );
 };
+

@@ -45,6 +45,7 @@ interface MusicContextType {
   createJobFromSelection: () => { success: boolean; message: string };
   cancelJob: (jobId: string) => void;
   deleteJob: (jobId: string) => void;
+  clearAllJobs: () => void;
   retryJob: (jobId: string) => void;
   startAlbumDownload: (
     album: {
@@ -82,13 +83,70 @@ interface MusicContextType {
 
 const MusicContext = createContext<MusicContextType | undefined>(undefined);
 
+// Helper to safely read from localStorage
+const loadFromStorage = <T,>(key: string, defaultValue: T): T => {
+  try {
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      return JSON.parse(saved);
+    }
+  } catch (err) {
+    console.warn(`Could not load ${key} from storage:`, err);
+  }
+  return defaultValue;
+};
+
 export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [activeTab, setActiveTab] = useState<NavigationTab>('search');
   const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
-  const [libraryItems, setLibraryItems] = useState<LibraryItem[]>(INITIAL_LIBRARY_ITEMS);
-  const [bookmarks, setBookmarks] = useState<Bookmark[]>(INITIAL_BOOKMARKS);
-  const [jobs, setJobs] = useState<Job[]>(INITIAL_HISTORY_JOBS);
-  const [packages, setPackages] = useState<Package[]>(INITIAL_PACKAGES);
+  
+  // Persistent state initialized from localStorage
+  const [libraryItems, setLibraryItems] = useState<LibraryItem[]>(() => 
+    loadFromStorage('playlistrip_library', INITIAL_LIBRARY_ITEMS)
+  );
+  const [bookmarks, setBookmarks] = useState<Bookmark[]>(() => 
+    loadFromStorage('playlistrip_bookmarks', [])
+  );
+  const [jobs, setJobs] = useState<Job[]>(() => 
+    loadFromStorage('playlistrip_jobs', [])
+  );
+  const [packages, setPackages] = useState<Package[]>(() => 
+    loadFromStorage('playlistrip_packages', [])
+  );
+
+  // Sync state changes back to localStorage automatically
+  useEffect(() => {
+    try {
+      localStorage.setItem('playlistrip_bookmarks', JSON.stringify(bookmarks));
+    } catch (e) {
+      console.warn('Failed saving bookmarks:', e);
+    }
+  }, [bookmarks]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('playlistrip_jobs', JSON.stringify(jobs));
+    } catch (e) {
+      console.warn('Failed saving jobs:', e);
+    }
+  }, [jobs]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('playlistrip_packages', JSON.stringify(packages));
+    } catch (e) {
+      console.warn('Failed saving packages:', e);
+    }
+  }, [packages]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('playlistrip_library', JSON.stringify(libraryItems));
+    } catch (e) {
+      console.warn('Failed saving library items:', e);
+    }
+  }, [libraryItems]);
+
   const [storage, setStorage] = useState<StorageStats>(INITIAL_STORAGE);
   const [currentPlayingTrack, setCurrentPlayingTrack] = useState<Track | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -419,6 +477,11 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     showToast('Removed from download history.');
   };
 
+  const clearAllJobs = () => {
+    setJobs([]);
+    showToast('Download history cleared.');
+  };
+
   const startAlbumDownload = (
     album: {
       title: string;
@@ -579,6 +642,7 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         createJobFromSelection,
         cancelJob,
         deleteJob,
+        clearAllJobs,
         retryJob,
         startAlbumDownload,
         packages,

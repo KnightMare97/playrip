@@ -22,7 +22,7 @@ import { Job } from '../types';
 import { downloadAlbumAsZip } from '../services/zipDownloader';
 
 export const HistoryView: React.FC = () => {
-  const { jobs, packages, deleteJob, deletePackage, showToast, setActiveTab } = useMusic();
+  const { jobs, packages, deleteJob, clearAllJobs, deletePackage, showToast, setActiveTab } = useMusic();
   const [expandedJobs, setExpandedJobs] = useState<Record<string, boolean>>({});
   const [downloadingJobId, setDownloadingJobId] = useState<string | null>(null);
   const [downloadProgress, setDownloadProgress] = useState<{ text: string; percent: number }>({
@@ -68,13 +68,26 @@ export const HistoryView: React.FC = () => {
           </p>
         </div>
 
-        <button
-          onClick={() => setActiveTab('search')}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-zinc-100 hover:bg-zinc-850 text-sm font-medium transition-all"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Search</span>
-        </button>
+        <div className="flex items-center gap-2">
+          {jobs.length > 0 && (
+            <button
+              onClick={clearAllJobs}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-rose-400 hover:border-rose-900/50 hover:bg-rose-950/20 text-xs font-medium transition-all"
+              title="Clear all download history"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>Clear History</span>
+            </button>
+          )}
+
+          <button
+            onClick={() => setActiveTab('search')}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-zinc-100 hover:bg-zinc-850 text-sm font-medium transition-all"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Search</span>
+          </button>
+        </div>
       </div>
 
       {/* Jobs List */}

@@ -7,12 +7,13 @@ import JSZip from 'jszip';
 import { Job } from '../types';
 
 /**
- * Creates a valid PCM Stereo WAV audio buffer (44.1kHz 16-bit stereo)
- * This guarantees a playable, non-corrupt audio file if external preview CDN fails or is offline.
+ * Creates a valid, clean PCM WAV audio buffer (22.05kHz 16-bit mono, 4s duration ~176KB).
+ * This guarantees a playable, non-corrupt, compact audio file if external preview CDN fails or is offline,
+ * preventing uncompressed WAV files from blowing up the ZIP to 13MB+.
  */
-function createSyntheticAudioBuffer(durationSeconds = 8, frequency = 440): ArrayBuffer {
-  const sampleRate = 44100;
-  const numChannels = 2;
+function createSyntheticAudioBuffer(durationSeconds = 4, frequency = 440): ArrayBuffer {
+  const sampleRate = 22050; // Compact high clarity rate
+  const numChannels = 1;     // Mono keeps size 4x smaller than uncompressed stereo
   const bitsPerSample = 16;
   const byteRate = sampleRate * numChannels * (bitsPerSample / 8);
   const blockAlign = numChannels * (bitsPerSample / 8);
@@ -54,20 +55,16 @@ function createSyntheticAudioBuffer(durationSeconds = 8, frequency = 440): Array
   let offset = 44;
   for (let i = 0; i < numSamples; i++) {
     const t = i / sampleRate;
-    // Envelope: 0.5s fade in, sustain, 1s fade out
+    // Envelope: 0.3s fade in, sustain, 0.5s fade out
     let envelope = 1.0;
-    if (t < 0.5) envelope = t / 0.5;
-    else if (t > durationSeconds - 1) envelope = (durationSeconds - t) / 1;
+    if (t < 0.3) envelope = t / 0.3;
+    else if (t > durationSeconds - 0.5) envelope = (durationSeconds - t) / 0.5;
 
     // Harmonic chord (root + fifth)
     const sampleVal = Math.sin(2 * Math.PI * frequency * t) * 0.4 +
                       Math.sin(2 * Math.PI * (frequency * 1.5) * t) * 0.25;
     const sampleInt16 = Math.max(-32768, Math.min(32767, Math.floor(sampleVal * envelope * 24000)));
 
-    // Left channel
-    view.setInt16(offset, sampleInt16, true);
-    offset += 2;
-    // Right channel
     view.setInt16(offset, sampleInt16, true);
     offset += 2;
   }
@@ -110,7 +107,7 @@ export async function downloadAlbumAsZip(
             const match = results.find(r => {
               if (!r.trackName) return false;
               const rClean = r.trackName.toLowerCase().replace(/[^a-z0-9]/g, '');
-              return rClean.includes(cleanTitle) || cleanTitle.includes(rClean);
+              return rClean === cleanTitle || rClean.includes(cleanTitle) || cleanTitle.includes(rClean);
             });
             if (match && match.previewUrl) {
               track.previewUrl = match.previewUrl;
@@ -172,7 +169,7 @@ export async function downloadAlbumAsZip(
     if (!audioData || audioData.byteLength < 1000) {
       // Distinct base chord for each track (e.g. 220Hz, 260Hz, 330Hz, etc.)
       const freq = 220 + ((idx * 37) % 300);
-      audioData = createSyntheticAudioBuffer(12, freq);
+      audioData = createSyntheticAudioBuffer(3, freq);
       extension = 'wav';
     }
 
