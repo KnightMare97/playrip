@@ -24,6 +24,7 @@ import {
   INITIAL_HISTORY_JOBS, 
   INITIAL_STORAGE 
 } from '../data/mockData';
+import { triggerGitHubActionsJob } from '../services/githubActions';
 
 interface MusicContextType {
   activeTab: NavigationTab;
@@ -246,7 +247,14 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setActiveTab('queue');
     showToast(`Job queued with ${tasks.length} tracks.`);
 
-    // Trigger asynchronous simulated execution on Oracle processor
+    // Trigger real GitHub Actions cloud runner in background
+    triggerGitHubActionsJob(newJob.id).then(res => {
+      if (res.success) {
+        showToast('🚀 GitHub Runner dispatched to process audio!');
+      }
+    });
+
+    // Handle real-time visual progress
     simulateJobProcessing(newJob.id, tasks);
 
     return { success: true, message: 'Job scheduled successfully.' };
@@ -260,7 +268,7 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         return {
           ...j,
           status: 'CLAIMED',
-          claimedBy: 'oracle-ampere-01',
+          claimedBy: 'github-actions-runner',
         };
       }));
 

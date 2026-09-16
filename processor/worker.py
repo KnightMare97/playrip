@@ -148,10 +148,10 @@ def process_task(task, work_dir, s3_client):
     r2_key = f"library/artists/{artist_mbid}/albums/{album_mbid}/{track_num} - {clean_title}_{rec_mbid}.mp3"
 
     if s3_client:
-        s3_client.upload_file(final_mp3, R2_BUCKET_NAME, r2_key)
-        print(f" -> Uploaded to R2: {r2_key} ({file_size / (1024*1024):.1f} MB)")
+        s3_client.upload_file(final_mp3, S3_BUCKET_NAME, r2_key)
+        print(f" -> Uploaded to S3: {r2_key} ({file_size / (1024*1024):.1f} MB)")
     else:
-        print(f" -> [MOCK] Uploaded to R2: {r2_key}")
+        print(f" -> [MOCK] Uploaded to S3: {r2_key}")
 
     return {
         "r2_key": r2_key,
@@ -245,7 +245,7 @@ def main():
 
                             pkg_r2_key = f"packages/user_1/{job_id}/Archive.zip"
                             if s3:
-                                s3.upload_file(zip_path, R2_BUCKET_NAME, pkg_r2_key)
+                                s3.upload_file(zip_path, S3_BUCKET_NAME, pkg_r2_key)
                                 print(f"[PACKAGE] Uploaded ZIP to {pkg_r2_key} ({zip_size / (1024*1024):.1f} MB)")
 
                         # Finalize Job

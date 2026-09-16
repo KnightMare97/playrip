@@ -130,7 +130,7 @@ export const StorageView: React.FC = () => {
             <span>0 GB</span>
             <span className="text-amber-400">80% (Warning)</span>
             <span className="text-rose-400">95% (Hard Block)</span>
-            <span>10 GB Max</span>
+            <span>25 GB Max (Storj DCS)</span>
           </div>
         </div>
 

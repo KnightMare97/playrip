@@ -188,37 +188,39 @@ export const SettingsView: React.FC = () => {
 
       {/* 3. Infrastructure Health */}
       <section className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 space-y-4 shadow-xl">
-        <div className="flex items-center gap-3">
-          <Server className="w-5 h-5 text-indigo-400" />
-          <h2 className="text-base font-bold text-zinc-100">Infrastructure Nodes & Free-Tier Health</h2>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Server className="w-5 h-5 text-indigo-400" />
+            <h2 className="text-base font-bold text-zinc-100">Infrastructure Nodes & Free-Tier Health</h2>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
           <div className="p-3.5 bg-zinc-950 border border-zinc-850 rounded-xl flex items-center justify-between">
-            <span className="text-zinc-400">Cloudflare Workers API</span>
+            <span className="text-zinc-400">GitHub Actions Runner</span>
             <span className="text-emerald-400 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Online
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Connected (KnightMare97/playrip)
             </span>
           </div>
 
           <div className="p-3.5 bg-zinc-950 border border-zinc-850 rounded-xl flex items-center justify-between">
-            <span className="text-zinc-400">Cloudflare D1 Database</span>
+            <span className="text-zinc-400">Storj DCS S3 Object Store</span>
             <span className="text-emerald-400 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Online
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> 25 GB Free (Bucket: gai)
             </span>
           </div>
 
           <div className="p-3.5 bg-zinc-950 border border-zinc-850 rounded-xl flex items-center justify-between">
-            <span className="text-zinc-400">Cloudflare R2 Object Store</span>
+            <span className="text-zinc-400">Telegram Bot Engine</span>
             <span className="text-emerald-400 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> 10 GB Free
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Active (Bot Connected)
             </span>
           </div>
 
           <div className="p-3.5 bg-zinc-950 border border-zinc-850 rounded-xl flex items-center justify-between">
-            <span className="text-zinc-400">Oracle ARM Processor (Pull)</span>
+            <span className="text-zinc-400">Audio Encoder (yt-dlp + ffmpeg)</span>
             <span className="text-emerald-400 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Active
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> 320 kbps CBR
             </span>
           </div>
         </div>

@@ -230,9 +230,9 @@ export const INITIAL_HISTORY_JOBS: Job[] = [
 
 export const INITIAL_STORAGE: StorageStats = {
   totalBytes: 83160000 + 83160000, // ~166 MB initial demo
-  maxBytes: 10 * 1024 * 1024 * 1024, // 10 GB
+  maxBytes: 25 * 1024 * 1024 * 1024, // 25 GB Storj DCS Free Tier
   libraryBytes: 83160000,
   packagesBytes: 83160000,
-  warningThresholdBytes: 8 * 1024 * 1024 * 1024, // 8.0 GB (80%)
-  criticalThresholdBytes: 9.5 * 1024 * 1024 * 1024, // 9.5 GB (95%)
+  warningThresholdBytes: 20 * 1024 * 1024 * 1024, // 20.0 GB (80%)
+  criticalThresholdBytes: 23.75 * 1024 * 1024 * 1024, // 23.75 GB (95%)
 };

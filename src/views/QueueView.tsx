@@ -76,18 +76,18 @@ export const QueueView: React.FC = () => {
               <h1 className="text-lg font-bold text-zinc-100">Acquisition & Processing Queue</h1>
               <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Pull Consumer Active
+                GitHub Runner Active
               </span>
             </div>
             <p className="text-xs text-zinc-400">
-              Jobs are claimed via signed pull requests by the Oracle Cloud Always Free compute node.
+              Zero-cost cloud audio processor powered by GitHub Actions Ubuntu runners and Storj DCS (25 GB free storage).
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2 text-xs font-mono bg-zinc-950 px-3.5 py-2 rounded-xl border border-zinc-800 text-zinc-400">
           <Cpu className="w-4 h-4 text-emerald-400" />
-          <span>Node: oracle-ampere-01 (Heartbeat: 4s ago)</span>
+          <span>Runner: KnightMare97/playrip (Ubuntu 24.04)</span>
         </div>
       </div>
 
