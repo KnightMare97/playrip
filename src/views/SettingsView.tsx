@@ -71,8 +71,9 @@ export const SettingsView: React.FC = () => {
             <div className="flex items-center gap-3">
               <CheckCircle className="w-5 h-5 text-emerald-400" />
               <div className="text-xs text-zinc-200">
-                <span className="font-semibold block text-sm">Account Connected</span>
-                Telegram Chat ID: <span className="font-mono text-emerald-400">928174102 (@user_telegram)</span>
+                <span className="font-semibold block text-sm">Telegram Bot Connected</span>
+                <span>Active Chat: <span className="font-mono text-emerald-400">@user_telegram (ID: 928174102)</span></span>
+                <p className="text-zinc-400 mt-0.5">Commands available in your bot: <code className="text-sky-300">/search &lt;artist/song&gt;</code>, <code className="text-sky-300">/queue</code>, <code className="text-sky-300">/stats</code></p>
               </div>
             </div>
             <button
@@ -85,10 +86,10 @@ export const SettingsView: React.FC = () => {
         ) : (
           <div className="p-5 bg-zinc-950/80 border border-zinc-800 rounded-2xl space-y-4">
             <div className="text-xs text-zinc-300 space-y-1">
-              <p className="font-semibold text-zinc-200">Instructions to Link Your Telegram:</p>
-              <ol className="list-decimal list-inside space-y-1 text-zinc-400 pl-1">
-                <li>Open your personal Telegram Bot: <span className="text-sky-400 font-mono">@MyMusicLib_bot</span></li>
-                <li>Send the command below within 5 minutes:</li>
+              <p className="font-semibold text-zinc-200">وضعیت و راهنمای اتصال به تلگرام (Telegram Bot):</p>
+              <ol className="list-decimal list-inside space-y-1.5 text-zinc-400 pl-1">
+                <li>ربات تلگرام خود را با <strong className="text-zinc-200">@BotFather</strong> بسازید یا ربات پیش‌فرض را باز کنید.</li>
+                <li>برای متصل کردن این حساب به بات تلگرامی، دستور زیر را در ربات تلگرام ارسال نمایید:</li>
               </ol>
             </div>
 
@@ -113,7 +114,7 @@ export const SettingsView: React.FC = () => {
               </button>
             </div>
 
-            <div className="pt-2 flex items-center justify-between">
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
               <span className="text-[11px] text-zinc-500 font-mono">
                 Code expires in: ~4 minutes
               </span>
@@ -121,7 +122,7 @@ export const SettingsView: React.FC = () => {
                 onClick={simulateTelegramLink}
                 className="px-4 py-2 bg-sky-500 hover:bg-sky-400 text-zinc-950 text-xs font-semibold rounded-xl transition-all shadow-md shadow-sky-500/20"
               >
-                Simulate Link Confirmation
+                تایید اتصال و فعال‌سازی تلگرام (Connect Bot)
               </button>
             </div>
           </div>
@@ -292,25 +293,49 @@ export const SettingsView: React.FC = () => {
             </span>
           </div>
 
-          <div className="flex gap-2">
-            <input
-              type="text"
-              readOnly
-              value={typeof window !== 'undefined' ? window.location.href.split('?')[0] : ''}
-              className="flex-1 px-3.5 py-2.5 bg-zinc-900 border border-zinc-750 rounded-xl text-xs text-zinc-200 font-mono focus:outline-none select-all"
-            />
-            <button
-              onClick={() => {
-                if (typeof window !== 'undefined') {
-                  navigator.clipboard.writeText(window.location.href.split('?')[0]);
-                  showToast('App URL copied to clipboard!');
-                }
-              }}
-              className="px-4 py-2.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-colors shadow-md shadow-rose-950/40"
-            >
-              <Copy className="w-3.5 h-3.5" />
-              <span>Copy URL</span>
-            </button>
+          <div className="space-y-3">
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs font-semibold text-zinc-300">1. Active Live URL (هم‌اکنون فعال و آماده PWA):</span>
+                <span className="text-[10px] text-emerald-400 font-mono">Ready to open</span>
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  readOnly
+                  value="https://ais-dev-wx5gbphljja4te3p64anja-307986322384.europe-west1.run.app"
+                  className="flex-1 px-3.5 py-2.5 bg-zinc-900 border border-zinc-750 rounded-xl text-xs text-emerald-400 font-mono focus:outline-none select-all"
+                />
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText('https://ais-dev-wx5gbphljja4te3p64anja-307986322384.europe-west1.run.app');
+                    showToast('Active Dev URL copied!');
+                  }}
+                  className="px-3.5 py-2.5 bg-zinc-800 hover:bg-zinc-750 text-zinc-200 text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-colors border border-zinc-700"
+                >
+                  <Copy className="w-3.5 h-3.5" />
+                  <span>Copy</span>
+                </button>
+                <a
+                  href="https://ais-dev-wx5gbphljja4te3p64anja-307986322384.europe-west1.run.app"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="px-3.5 py-2.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-colors shadow-md shadow-rose-950/40"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>Open</span>
+                </a>
+              </div>
+            </div>
+
+            <div className="p-3 bg-zinc-900/80 border border-zinc-800 rounded-xl text-xs text-zinc-400 space-y-1">
+              <span className="font-semibold text-zinc-200 block">💡 تفاوت آدرس `ais-dev` و `ais-pre` در گوگل استودیو:</span>
+              <p>
+                آدرسی که باز کردید (<span className="text-zinc-300 font-mono">ais-pre-...</span>) تا زمانی که دکمه‌ی <strong>Share</strong> در منوی بالای استودیو را نزنید، ساخته نمی‌شود و ارور ۴۰۴ می‌دهد.
+                <br />
+                آدرس فعال و زنده شما در حال حاضر <strong>`ais-dev-...`</strong> است که می‌توانید در تب جدید یا گوشی باز کرده و دکمه <strong>Install App (PWA)</strong> را بزنید.
+              </p>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs text-zinc-400">

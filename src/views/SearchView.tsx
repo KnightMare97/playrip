@@ -104,12 +104,30 @@ export const SearchView: React.FC = () => {
             type="text"
             value={query}
             onChange={e => setQuery(e.target.value)}
-            placeholder="Search YouTube or paste video/playlist link (e.g., Eminem Rap God, MMLP2, https://youtu.be/...)"
+            placeholder="Search any artist, song, album or paste YouTube URL (e.g. Eminem, Queen, Metallica, Pink Floyd...)"
             className="w-full pl-12 pr-12 py-3.5 bg-zinc-900 border border-zinc-750 focus:border-rose-500/80 rounded-2xl text-zinc-100 placeholder:text-zinc-500 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 shadow-xl transition-all"
           />
           {loading && (
             <Loader2 className="absolute right-4 w-5 h-5 text-rose-500 animate-spin" />
           )}
+        </div>
+
+        {/* Quick Artists Chips */}
+        <div className="flex items-center gap-1.5 mt-2.5 overflow-x-auto pb-1 text-xs">
+          <span className="text-zinc-400 text-[11px] font-medium shrink-0">Popular Artists:</span>
+          {['Eminem', 'Metallica', 'Pink Floyd', 'Black Sabbath', 'Queen'].map(artist => (
+            <button
+              key={artist}
+              onClick={() => setQuery(artist)}
+              className={`px-2.5 py-0.5 rounded-lg text-xs font-medium border transition-colors shrink-0 ${
+                query.toLowerCase().includes(artist.toLowerCase())
+                  ? 'bg-rose-500/20 border-rose-500/50 text-rose-300'
+                  : 'bg-zinc-900/90 border-zinc-800 text-zinc-300 hover:bg-zinc-800'
+              }`}
+            >
+              {artist}
+            </button>
+          ))}
         </div>
 
         {/* Quick Tabs & Indicator */}

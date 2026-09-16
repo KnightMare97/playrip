@@ -121,23 +121,31 @@ export const PWAInstallButton: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs text-zinc-400 font-medium">Your Public Web App Address:</label>
+              <label className="text-xs text-zinc-400 font-medium">Your Active Web App Address:</label>
               <div className="flex items-center gap-2">
                 <input
                   type="text"
                   readOnly
-                  value={window.location.href.split('?')[0]}
-                  className="flex-1 px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-zinc-300 font-mono focus:outline-none"
+                  value="https://ais-dev-wx5gbphljja4te3p64anja-307986322384.europe-west1.run.app"
+                  className="flex-1 px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-emerald-400 font-mono focus:outline-none"
                 />
                 <button
                   onClick={() => {
-                    navigator.clipboard.writeText(window.location.href.split('?')[0]);
-                    alert('App URL copied to clipboard!');
+                    navigator.clipboard.writeText('https://ais-dev-wx5gbphljja4te3p64anja-307986322384.europe-west1.run.app');
+                    alert('Active Web App URL copied to clipboard!');
                   }}
                   className="px-3 py-2 bg-zinc-800 hover:bg-zinc-750 text-zinc-200 text-xs font-medium rounded-xl border border-zinc-700 transition-colors"
                 >
                   Copy
                 </button>
+                <a
+                  href="https://ais-dev-wx5gbphljja4te3p64anja-307986322384.europe-west1.run.app"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="px-3 py-2 bg-rose-600 hover:bg-rose-500 text-white text-xs font-medium rounded-xl transition-colors"
+                >
+                  Open
+                </a>
               </div>
             </div>
 
