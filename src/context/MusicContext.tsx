@@ -10,6 +10,7 @@ import {
   LibraryItem, 
   Job, 
   JobTask, 
+  TaskStatus,
   Package, 
   Bookmark, 
   StorageStats, 
@@ -53,7 +54,7 @@ interface MusicContextType {
       year?: string;
       totalDurationFormatted?: string;
     },
-    tracks?: { title: string; durationFormatted: string }[]
+    tracks?: { title: string; durationFormatted: string; previewUrl?: string; artist?: string; position?: number }[]
   ) => void;
   packages: Package[];
   deletePackage: (id: string) => void;
@@ -426,17 +427,23 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       year?: string;
       totalDurationFormatted?: string;
     },
-    tracks: { title: string; durationFormatted: string }[] = []
+    tracks: { title: string; durationFormatted: string; previewUrl?: string; artist?: string; position?: number }[] = []
   ) => {
     const jobId = `job_${Date.now()}`;
     const totalTracks = tracks.length > 0 ? tracks.length : 8;
     const initialTracksList = tracks.length > 0
-      ? tracks.map((t, idx) => ({ position: idx + 1, title: t.title, durationFormatted: t.durationFormatted }))
+      ? tracks.map((t, idx) => ({ 
+          position: t.position || idx + 1, 
+          title: t.title, 
+          durationFormatted: t.durationFormatted,
+          previewUrl: t.previewUrl,
+          artist: t.artist || album.artist
+        }))
       : [
-          { position: 1, title: 'Track 1', durationFormatted: '4:12' },
-          { position: 2, title: 'Track 2', durationFormatted: '3:45' },
-          { position: 3, title: 'Track 3', durationFormatted: '5:20' },
-          { position: 4, title: 'Track 4', durationFormatted: '4:45' },
+          { position: 1, title: 'Track 1', durationFormatted: '4:12', artist: album.artist },
+          { position: 2, title: 'Track 2', durationFormatted: '3:45', artist: album.artist },
+          { position: 3, title: 'Track 3', durationFormatted: '5:20', artist: album.artist },
+          { position: 4, title: 'Track 4', durationFormatted: '4:45', artist: album.artist },
         ];
 
     const newJob: Job = {
@@ -461,7 +468,7 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         trackTitle: t.title,
         artistName: album.artist,
         albumTitle: album.title,
-        status: idx === 0 ? 'PROCESSING' : 'PENDING',
+        status: (idx === 0 ? 'PROCESSING' : 'PENDING') as TaskStatus,
         progressPercent: idx === 0 ? 40 : 0,
       }))
     };

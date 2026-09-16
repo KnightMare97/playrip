@@ -151,10 +151,32 @@ export const SearchView: React.FC = () => {
   };
 
   // Handle Download Album
-  const handleDownloadAlbum = (album: ITunesAlbum, specificTracks?: ITunesTrack[]) => {
-    const trackList = (specificTracks || albumTracks).map(t => ({
+  const handleDownloadAlbum = async (album: ITunesAlbum, specificTracks?: ITunesTrack[]) => {
+    let rawTracks = specificTracks;
+    
+    // If not passed and current album matches, use cached tracks
+    if (!rawTracks && selectedAlbum?.collectionId === album.collectionId && albumTracks.length > 0) {
+      rawTracks = albumTracks;
+    }
+
+    // If still empty, quickly fetch full album tracklist from iTunes API
+    if (!rawTracks || rawTracks.length === 0) {
+      try {
+        const res = await getAlbumTracks(album.collectionId);
+        if (res.tracks.length > 0) {
+          rawTracks = res.tracks;
+        }
+      } catch (err) {
+        console.warn('Could not preload tracks from iTunes API', err);
+      }
+    }
+
+    const trackList = (rawTracks || []).map((t, idx) => ({
+      position: t.trackNumber || idx + 1,
       title: t.trackName,
-      durationFormatted: t.durationFormatted
+      durationFormatted: t.durationFormatted,
+      previewUrl: t.previewUrl,
+      artist: t.artistName || album.artistName
     }));
 
     startAlbumDownload({

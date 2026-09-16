@@ -19,28 +19,40 @@ import {
 } from 'lucide-react';
 import { useMusic } from '../context/MusicContext';
 import { Job } from '../types';
+import { downloadAlbumAsZip } from '../services/zipDownloader';
 
 export const HistoryView: React.FC = () => {
   const { jobs, packages, deleteJob, deletePackage, showToast, setActiveTab } = useMusic();
   const [expandedJobs, setExpandedJobs] = useState<Record<string, boolean>>({});
+  const [downloadingJobId, setDownloadingJobId] = useState<string | null>(null);
+  const [downloadProgress, setDownloadProgress] = useState<{ text: string; percent: number }>({
+    text: '',
+    percent: 0,
+  });
 
   const toggleExpand = (jobId: string) => {
     setExpandedJobs(prev => ({ ...prev, [jobId]: !prev[jobId] }));
   };
 
-  const handleDownloadZip = (jobTitle: string) => {
-    // Generate real client-side downloadable archive text blob
-    const content = `PlaylistRip Download Archive\nAlbum: ${jobTitle}\nDownloaded at: ${new Date().toISOString()}\nStatus: Verified 320kbps MP3 Audio Package\n\nThank you for using PlaylistRip!`;
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${jobTitle.replace(/[^a-z0-9]/gi, '_')}.zip`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showToast(`Downloading "${jobTitle}.zip"...`);
+  const handleDownloadZip = async (job: Job) => {
+    const albumName = job.albumTitle || job.title;
+    try {
+      setDownloadingJobId(job.id);
+      setDownloadProgress({ text: 'Starting download...', percent: 5 });
+      showToast(`Creating high-fidelity ZIP for "${albumName}"...`);
+
+      await downloadAlbumAsZip(job, (statusText, percent) => {
+        setDownloadProgress({ text: statusText, percent });
+      });
+
+      showToast(`"${albumName}.zip" downloaded successfully!`);
+    } catch (err) {
+      console.error('Failed to generate real ZIP archive:', err);
+      showToast(`Error creating ZIP for "${albumName}". Please try again.`);
+    } finally {
+      setDownloadingJobId(null);
+      setDownloadProgress({ text: '', percent: 0 });
+    }
   };
 
   return (
@@ -159,14 +171,33 @@ export const HistoryView: React.FC = () => {
 
                   {/* Actions for Completed Card */}
                   {isCompleted && (
-                    <div className="w-full sm:w-auto pt-2 sm:pt-0">
+                    <div className="w-full sm:w-auto pt-2 sm:pt-0 flex flex-col items-end gap-1.5">
                       <button
-                        onClick={() => handleDownloadZip(job.albumTitle || job.title)}
-                        className="w-full sm:w-auto px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/25 transition-all active:scale-95"
+                        onClick={() => handleDownloadZip(job)}
+                        disabled={downloadingJobId === job.id}
+                        className={`w-full sm:w-auto px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold transition-all active:scale-95 ${
+                          downloadingJobId === job.id
+                            ? 'bg-zinc-800 text-indigo-300 border border-indigo-500/30 cursor-wait'
+                            : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/25'
+                        }`}
                       >
-                        <Download className="w-4 h-4" />
-                        <span>Download ZIP</span>
+                        {downloadingJobId === job.id ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin text-indigo-400" />
+                            <span>Packaging {downloadProgress.percent}%</span>
+                          </>
+                        ) : (
+                          <>
+                            <Download className="w-4 h-4" />
+                            <span>Download ZIP</span>
+                          </>
+                        )}
                       </button>
+                      {downloadingJobId === job.id && downloadProgress.text && (
+                        <p className="text-[11px] text-zinc-400 font-mono text-center sm:text-right animate-pulse">
+                          {downloadProgress.text}
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>

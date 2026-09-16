@@ -113,7 +113,13 @@ export interface Job {
   coverUrl?: string;
   totalDurationFormatted?: string;
   activeTaskText?: string;
-  allTracksList?: { title: string; durationFormatted: string; position?: number }[];
+  allTracksList?: { 
+    title: string; 
+    durationFormatted: string; 
+    position?: number;
+    previewUrl?: string;
+    artist?: string;
+  }[];
   zipDownloadUrl?: string;
 }
 
