@@ -43,7 +43,18 @@ interface MusicContextType {
   jobs: Job[];
   createJobFromSelection: () => { success: boolean; message: string };
   cancelJob: (jobId: string) => void;
+  deleteJob: (jobId: string) => void;
   retryJob: (jobId: string) => void;
+  startAlbumDownload: (
+    album: {
+      title: string;
+      artist: string;
+      coverUrl?: string;
+      year?: string;
+      totalDurationFormatted?: string;
+    },
+    tracks?: { title: string; durationFormatted: string }[]
+  ) => void;
   packages: Package[];
   deletePackage: (id: string) => void;
   storage: StorageStats;
@@ -402,6 +413,107 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     showToast('Job was cancelled.');
   };
 
+  const deleteJob = (jobId: string) => {
+    setJobs(prev => prev.filter(j => j.id !== jobId));
+    showToast('Removed from download history.');
+  };
+
+  const startAlbumDownload = (
+    album: {
+      title: string;
+      artist: string;
+      coverUrl?: string;
+      year?: string;
+      totalDurationFormatted?: string;
+    },
+    tracks: { title: string; durationFormatted: string }[] = []
+  ) => {
+    const jobId = `job_${Date.now()}`;
+    const totalTracks = tracks.length > 0 ? tracks.length : 8;
+    const initialTracksList = tracks.length > 0
+      ? tracks.map((t, idx) => ({ position: idx + 1, title: t.title, durationFormatted: t.durationFormatted }))
+      : [
+          { position: 1, title: 'Track 1', durationFormatted: '4:12' },
+          { position: 2, title: 'Track 2', durationFormatted: '3:45' },
+          { position: 3, title: 'Track 3', durationFormatted: '5:20' },
+          { position: 4, title: 'Track 4', durationFormatted: '4:45' },
+        ];
+
+    const newJob: Job = {
+      id: jobId,
+      origin: 'web',
+      title: album.title,
+      albumTitle: album.title,
+      artistName: album.artist,
+      coverUrl: album.coverUrl,
+      status: 'PROCESSING',
+      totalTracks,
+      completedTracks: 1,
+      failedTracks: 0,
+      claimedBy: 'cloud-runner-01',
+      createdAt: Date.now(),
+      totalDurationFormatted: album.totalDurationFormatted || `${totalTracks} tracks`,
+      activeTaskText: `1/${totalTracks} · ${initialTracksList[0].title}`,
+      allTracksList: initialTracksList,
+      tasks: initialTracksList.map((t, idx) => ({
+        id: `task_${jobId}_${idx}`,
+        recordingMbid: `rec_${jobId}_${idx}`,
+        trackTitle: t.title,
+        artistName: album.artist,
+        albumTitle: album.title,
+        status: idx === 0 ? 'PROCESSING' : 'PENDING',
+        progressPercent: idx === 0 ? 40 : 0,
+      }))
+    };
+
+    setJobs(prev => [newJob, ...prev]);
+    showToast(`Started downloading "${album.title}". Check History tab!`);
+
+    // Simulated cloud runner progress
+    let currentTrackIdx = 1;
+    const interval = setInterval(() => {
+      currentTrackIdx++;
+      if (currentTrackIdx <= totalTracks) {
+        setJobs(prev => prev.map(j => {
+          if (j.id !== jobId) return j;
+          const activeTrack = initialTracksList[currentTrackIdx - 1] || initialTracksList[0];
+          return {
+            ...j,
+            completedTracks: currentTrackIdx,
+            activeTaskText: `${currentTrackIdx}/${totalTracks} · ${activeTrack.title}`,
+          };
+        }));
+      } else {
+        clearInterval(interval);
+        const pkgId = `pkg_${Date.now()}`;
+        const newPackage: Package = {
+          id: pkgId,
+          jobId,
+          title: album.title,
+          r2ObjectKey: `packages/user_1/${pkgId}/${album.title}.zip`,
+          fileSizeBytes: totalTracks * 12500000,
+          trackCount: totalTracks,
+          expiresAt: Date.now() + 1000 * 60 * 60 * 48,
+          createdAt: Date.now(),
+          downloadCount: 0,
+        };
+        setPackages(prev => [newPackage, ...prev]);
+        setJobs(prev => prev.map(j => {
+          if (j.id !== jobId) return j;
+          return {
+            ...j,
+            status: 'COMPLETED',
+            completedAt: Date.now(),
+            completedTracks: totalTracks,
+            activeTaskText: undefined,
+            generatedPackageId: pkgId,
+          };
+        }));
+        showToast(`"${album.title}" is ready! Download ZIP available.`);
+      }
+    }, 2500);
+  };
+
   const retryJob = (jobId: string) => {
     const existing = jobs.find(j => j.id === jobId);
     if (!existing) return;
@@ -459,7 +571,9 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         jobs,
         createJobFromSelection,
         cancelJob,
+        deleteJob,
         retryJob,
+        startAlbumDownload,
         packages,
         deletePackage,
         storage,

@@ -1,6 +1,6 @@
 {
-  "name": "PlayRip Music Cloud",
-  "description": "High-fidelity music library, YouTube 320k downloader, and media cloud manager.",
+  "name": "PlaylistRip",
+  "description": "High-fidelity music search, discography ripper, and download cloud manager.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

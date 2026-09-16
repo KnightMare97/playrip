@@ -14,9 +14,9 @@ export default defineConfig(() => {
         includeAssets: ['icon.svg', 'assets/aistudio/favicon.ico'],
         manifest: {
           id: '/',
-          name: 'PlayRip Music Cloud',
-          short_name: 'PlayRip',
-          description: 'High-fidelity music library, YouTube 320k downloader, and media cloud manager.',
+          name: 'PlaylistRip',
+          short_name: 'PlaylistRip',
+          description: 'High-fidelity music search, discography ripper, and download cloud manager.',
           theme_color: '#09090b',
           background_color: '#09090b',
           display: 'standalone',

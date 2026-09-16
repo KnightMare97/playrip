@@ -108,6 +108,13 @@ export interface Job {
   completedAt?: number;
   tasks: JobTask[];
   generatedPackageId?: string;
+  albumTitle?: string;
+  artistName?: string;
+  coverUrl?: string;
+  totalDurationFormatted?: string;
+  activeTaskText?: string;
+  allTracksList?: { title: string; durationFormatted: string; position?: number }[];
+  zipDownloadUrl?: string;
 }
 
 export interface Package {

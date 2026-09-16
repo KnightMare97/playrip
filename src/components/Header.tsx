@@ -55,54 +55,63 @@ export const Header: React.FC = () => {
         {/* Brand / Logo */}
         <div 
           onClick={() => setActiveTab('search')}
-          className="flex items-center gap-3 cursor-pointer select-none group"
+          className="flex items-center gap-2.5 cursor-pointer select-none group"
           id="brand-logo"
         >
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
-            <Radio className="w-5 h-5 text-zinc-950" />
+          <div className="w-8 h-8 rounded-xl bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center shadow-lg shadow-indigo-500/10 group-hover:scale-105 transition-transform">
+            <Radio className="w-4 h-4 text-indigo-400" />
           </div>
-          <div>
-            <span className="font-semibold tracking-tight text-zinc-100 text-base">
-              PlayRip Music Cloud
-            </span>
-            <div className="flex items-center gap-1.5 text-[11px] text-zinc-400">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-              <span>YouTube 320k + GitHub Actions Runner</span>
-            </div>
-          </div>
+          <span className="font-bold tracking-tight text-zinc-100 text-lg">
+            PlaylistRip
+          </span>
         </div>
 
         {/* Navigation Tabs */}
-        <nav className="hidden md:flex items-center gap-1 bg-zinc-900/80 p-1 rounded-xl border border-zinc-800">
-          {navItems.map(item => {
+        <nav className="flex items-center gap-1 sm:gap-2">
+          {[
+            { id: 'search', label: 'Search', icon: <Search className="w-4 h-4" /> },
+            { id: 'bookmarks', label: 'Bookmarks', icon: <Bookmark className="w-4 h-4" /> },
+            { 
+              id: 'history', 
+              label: 'History', 
+              icon: <History className="w-4 h-4" />, 
+              badge: activeJobsCount > 0 ? activeJobsCount : undefined 
+            },
+          ].map(item => {
             const isActive = activeTab === item.id;
             return (
               <button
                 key={item.id}
                 id={`nav-tab-${item.id}`}
-                onClick={() => setActiveTab(item.id)}
-                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all relative ${
+                onClick={() => setActiveTab(item.id as NavigationTab)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all relative ${
                   isActive
-                    ? 'bg-zinc-800 text-zinc-100 shadow-sm'
-                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-850'
+                    ? 'text-zinc-100 font-semibold'
+                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60'
                 }`}
               >
                 {item.icon}
                 <span>{item.label}</span>
                 {item.badge !== undefined && (
-                  <span className={`text-[11px] px-1.5 py-0.2 rounded-full font-mono font-semibold ${
-                    typeof item.badge === 'number'
-                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 animate-pulse'
-                      : storagePercent >= 80
-                      ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                      : 'bg-zinc-700/60 text-zinc-300'
-                  }`}>
+                  <span className="text-[10px] px-1.5 py-0.2 rounded-full font-mono font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/40">
                     {item.badge}
                   </span>
                 )}
               </button>
             );
           })}
+
+          <button
+            onClick={() => setActiveTab('settings')}
+            className={`p-2 rounded-lg text-sm transition-all ml-1 ${
+              activeTab === 'settings'
+                ? 'bg-zinc-800 text-zinc-100'
+                : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60'
+            }`}
+            title="Settings"
+          >
+            <Settings className="w-4 h-4" />
+          </button>
         </nav>
 
         {/* Status / Cloudflare Info & PWA */}
