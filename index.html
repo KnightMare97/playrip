@@ -2,17 +2,27 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Personal Music Library</title>
-    <meta name="description" content="Personal web-based music library and media management system with Telegram integration." />
-    <meta property="og:title" content="Personal Music Library" />
-    <meta property="og:description" content="Personal web-based music library and media management system with Telegram integration." />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>PlayRip Music Cloud</title>
+    <meta name="description" content="High-fidelity music library, YouTube 320k downloader, and media cloud manager." />
+    
+    <!-- PWA & Mobile Web App Meta -->
+    <meta name="theme-color" content="#09090b" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="PlayRip" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="apple-touch-icon" href="/icon.svg" />
+
+    <!-- OpenGraph & Social Cards -->
+    <meta property="og:title" content="PlayRip Music Cloud" />
+    <meta property="og:description" content="High-fidelity music library, YouTube 320k downloader, and media cloud manager." />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
   </head>
-  <body>
+  <body class="bg-zinc-950 text-zinc-100 selection:bg-rose-500 selection:text-white">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

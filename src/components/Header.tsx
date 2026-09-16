@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useMusic } from '../context/MusicContext';
 import { NavigationTab } from '../types';
+import { PWAInstallButton } from './PWAInstallButton';
 
 export const Header: React.FC = () => {
   const { activeTab, setActiveTab, jobs, storage } = useMusic();
@@ -62,11 +63,11 @@ export const Header: React.FC = () => {
           </div>
           <div>
             <span className="font-semibold tracking-tight text-zinc-100 text-base">
-              Personal Music Library
+              PlayRip Music Cloud
             </span>
             <div className="flex items-center gap-1.5 text-[11px] text-zinc-400">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Cloudflare + Oracle Pull Architecture</span>
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+              <span>YouTube 320k + GitHub Actions Runner</span>
             </div>
           </div>
         </div>
@@ -104,11 +105,13 @@ export const Header: React.FC = () => {
           })}
         </nav>
 
-        {/* Status / Cloudflare Info */}
+        {/* Status / Cloudflare Info & PWA */}
         <div className="flex items-center gap-2.5">
+          <PWAInstallButton />
+
           <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-xs font-mono text-zinc-300">
-            <span className="text-zinc-500">R2:</span>
-            <span>{storageUsedGB} / 10 GB</span>
+            <span className="text-zinc-500">Storj:</span>
+            <span>{storageUsedGB} / 25 GB</span>
           </div>
 
           <a 

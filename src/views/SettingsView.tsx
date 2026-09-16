@@ -14,7 +14,9 @@ import {
   ExternalLink,
   Copy,
   Server,
-  Cloud
+  Cloud,
+  Smartphone,
+  Share
 } from 'lucide-react';
 import { useMusic } from '../context/MusicContext';
 
@@ -222,6 +224,104 @@ export const SettingsView: React.FC = () => {
             <span className="text-emerald-400 flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> 320 kbps CBR
             </span>
+          </div>
+        </div>
+
+        {/* GitHub Actions Token */}
+        <div className="pt-2 border-t border-zinc-800">
+          <div className="p-4 bg-zinc-950 border border-zinc-850 rounded-2xl space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <span className="text-xs font-semibold text-zinc-200">GitHub Actions Personal Token</span>
+              </div>
+              <span className="text-[10px] text-zinc-500 font-mono">Browser Storage</span>
+            </div>
+            <p className="text-xs text-zinc-400">
+              Personal Access Token used by your browser to dispatch jobs to KnightMare97/playrip runner:
+            </p>
+            <div className="flex gap-2">
+              <input
+                id="input-github-token"
+                type="password"
+                placeholder="Paste your GitHub token (ghp_...)"
+                defaultValue={localStorage.getItem('playrip_gh_token') || ''}
+                onChange={(e) => {
+                  if (e.target.value.trim()) {
+                    localStorage.setItem('playrip_gh_token', e.target.value.trim());
+                  } else {
+                    localStorage.removeItem('playrip_gh_token');
+                  }
+                }}
+                className="flex-1 px-3 py-2 bg-zinc-900 border border-zinc-750 focus:border-emerald-500 rounded-xl text-xs text-zinc-200 font-mono placeholder:text-zinc-600 focus:outline-none"
+              />
+              <button
+                onClick={() => {
+                  const el = document.getElementById('input-github-token') as HTMLInputElement;
+                  if (el?.value) localStorage.setItem('playrip_gh_token', el.value.trim());
+                  showToast('GitHub token saved in browser storage.');
+                }}
+                className="px-3.5 py-2 bg-zinc-850 hover:bg-zinc-800 text-emerald-400 text-xs font-semibold rounded-xl border border-zinc-750 transition-colors"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Progressive Web App (PWA) & Public URL */}
+      <section className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 space-y-4 shadow-xl">
+        <div className="flex items-center gap-3.5">
+          <div className="w-12 h-12 rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400 shrink-0">
+            <Smartphone className="w-6 h-6" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-zinc-100">Progressive Web App (PWA) URL</h2>
+            <p className="text-xs text-zinc-400">
+              Install PlayRip directly onto your Android, iPhone, or Desktop without an app store.
+            </p>
+          </div>
+        </div>
+
+        <div className="p-4 bg-zinc-950 border border-zinc-850 rounded-2xl space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-zinc-300">Application Web Address (URL)</span>
+            <span className="text-[10px] text-emerald-400 font-mono flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Standalone PWA Enabled
+            </span>
+          </div>
+
+          <div className="flex gap-2">
+            <input
+              type="text"
+              readOnly
+              value={typeof window !== 'undefined' ? window.location.href.split('?')[0] : ''}
+              className="flex-1 px-3.5 py-2.5 bg-zinc-900 border border-zinc-750 rounded-xl text-xs text-zinc-200 font-mono focus:outline-none select-all"
+            />
+            <button
+              onClick={() => {
+                if (typeof window !== 'undefined') {
+                  navigator.clipboard.writeText(window.location.href.split('?')[0]);
+                  showToast('App URL copied to clipboard!');
+                }
+              }}
+              className="px-4 py-2.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-colors shadow-md shadow-rose-950/40"
+            >
+              <Copy className="w-3.5 h-3.5" />
+              <span>Copy URL</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs text-zinc-400">
+            <div className="p-3 bg-zinc-900/60 rounded-xl border border-zinc-800/80">
+              <span className="font-semibold text-zinc-200 block mb-1">Android & Chrome / Edge:</span>
+              <span>Tap the <strong>Install App</strong> button in the top bar or use the browser menu (⋮) &gt; <em>Install App</em>.</span>
+            </div>
+            <div className="p-3 bg-zinc-900/60 rounded-xl border border-zinc-800/80">
+              <span className="font-semibold text-zinc-200 block mb-1">iPhone / iPad (iOS Safari):</span>
+              <span>Tap the <strong>Share</strong> button at bottom &gt; tap <strong>Add to Home Screen</strong>.</span>
+            </div>
           </div>
         </div>
       </section>
